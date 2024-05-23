@@ -9,8 +9,17 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.static('uploads'));
+app.use(express.static('public')); // Dies sorgt dafür, dass Dateien aus dem public-Verzeichnis bedient werden
 
-// Serve the index.html file
+// HTTPS erzwingen
+app.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https') {
+    res.redirect(`https://${req.header('host')}${req.url}`);
+  } else {
+    next();
+  }
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -26,7 +35,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/upload', upload.single('image'), (req, res) => {
+app.post('/upload', upload.single('file'), (req, res) => {
   if (req.file) {
     res.json({ filename: req.file.filename });
   } else {
@@ -34,16 +43,17 @@ app.post('/upload', upload.single('image'), (req, res) => {
   }
 });
 
-app.get('/images', (req, res) => {
+app.get('/media', (req, res) => {
   const directoryPath = path.join(__dirname, 'uploads');
   fs.readdir(directoryPath, (err, files) => {
     if (err) {
       return res.status(500).send('Verzeichnis kann nicht durchsucht werden: ' + err);
     }
-    const images = files.map(file => {
-      return { url: `/${file}` };
+    const mediaFiles = files.map(file => {
+      const fileType = file.split('.').pop();
+      return { url: `/uploads/${file}`, type: fileType.startsWith('mp4') ? 'video/mp4' : 'image/jpeg' };
     });
-    res.json(images);
+    res.json(mediaFiles);
   });
 });
 
