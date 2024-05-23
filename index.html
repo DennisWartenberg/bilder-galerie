@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilder Galerie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .gallery img {
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-form {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .upload-form input[type="file"] {
+            display: none;
+        }
+
+        .upload-form label {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery" id="gallery"></div>
+    <div class="upload-form">
+        <form id="upload-form">
+            <input type="file" id="file-input" accept="image/*">
+            <label for="file-input">Bild hochladen</label>
+        </form>
+    </div>
+    <script>
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                fetch('http://localhost:3000/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.filename) {
+                        addImageToGallery(`http://localhost:3000/${data.filename}`);
+                    } else {
+                        alert('File upload failed.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+
+        function addImageToGallery(url) {
+            const img = document.createElement('img');
+            img.src = url;
+            document.getElementById('gallery').appendChild(img);
+        }
+
+        function loadImages() {
+            fetch('http://localhost:3000/images')
+                .then(response => response.json())
+                .then(images => {
+                    images.forEach(image => {
+                        addImageToGallery(image.url);
+                    });
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadImages);
+    </script>
+</body>
+</html>
