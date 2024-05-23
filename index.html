@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bilder und Videos Galerie</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="public/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -17,6 +18,9 @@
             <label for="file-input">Datei hochladen</label>
         </form>
     </div>
+    <footer>
+        &copy; 2024 Bilder und Videos Galerie. Alle Rechte vorbehalten.
+    </footer>
     <script>
         document.getElementById('file-input').addEventListener('change', function(event) {
             const file = event.target.files[0];
