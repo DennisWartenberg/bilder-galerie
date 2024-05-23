@@ -9,9 +9,8 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.static('uploads'));
-app.use(express.static('public')); // Dies sorgt dafür, dass Dateien aus dem public-Verzeichnis bedient werden
+app.use(express.static('public'));
 
-// HTTPS erzwingen
 app.use((req, res, next) => {
   if (req.header('x-forwarded-proto') !== 'https') {
     res.redirect(`https://${req.header('host')}${req.url}`);
