@@ -7,6 +7,15 @@ const fs = require('fs');
 const app = express();
 const port = 3000;
 
+const express = require('express');
+const multer = require('multer');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.static('uploads'));
 
@@ -43,7 +52,7 @@ app.get('/images', (req, res) => {
         }
 
         const images = files.map(file => ({
-            url: `http://localhost:3000/${file}`
+            url: `/${file}`
         }));
 
         res.json(images);
