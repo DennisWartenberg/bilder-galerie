@@ -21,7 +21,7 @@
             <label for="file-input">Datei hochladen</label>
         </form>
     </div>
-<footer>
+    <footer>
         &copy; 2024 Bilder und Videos Galerie. Alle Rechte vorbehalten.
     </footer>
     <script>
@@ -37,8 +37,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.filename) {
-                        addMediaToGallery(`/uploads/${data.filename}`, file.type);
+                    if (data.url) {
+                        addMediaToGallery(data.url, file.type);
                     } else {
                         alert('Datei-Upload fehlgeschlagen.');
                     }
@@ -70,4 +70,5 @@
     </script>
 </body>
 </html>
+
 
