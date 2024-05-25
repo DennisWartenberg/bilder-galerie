@@ -19,8 +19,14 @@ app.use((req, res, next) => {
   }
 });
 
+// Hauptseite
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Unterbeitrag
+app.get('/unterbeitrag1', (req, res) => {
+  res.sendFile(path.join(__dirname, 'unterbeitrag1.html'));
 });
 
 const storage = multer.diskStorage({
@@ -59,3 +65,4 @@ app.get('/media', (req, res) => {
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
+

@@ -24,6 +24,17 @@ header h1 {
     color: #00ff00; /* Grüne Farbe */
 }
 
+header nav a {
+    color: #ffffff; /* Weiß für bessere Sichtbarkeit */
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
 .gallery {
     display: flex;
     flex-wrap: wrap;
