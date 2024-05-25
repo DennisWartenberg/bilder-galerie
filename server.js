@@ -1,15 +1,34 @@
 const express = require('express');
 const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 const path = require('path');
 const cors = require('cors');
-const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Cloudinary Konfiguration
+cloudinary.config({
+  cloud_name: 'ds4nokwd3',
+  api_key: '727516436138348',
+  api_secret: 'LDt1qY5yWqfJvX41EVvXSfYs40o'
+});
+
+// Multer Cloudinary Storage Konfiguration
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads',
+    format: async (req, file) => 'jpg', // Unterstützte Formate: jpg, png, etc.
+    public_id: (req, file) => Date.now().toString()
+  }
+});
+
+const upload = multer({ storage: storage });
+
 app.use(cors());
-app.use(express.static('uploads'));
-app.use(express.static('public')); // Statische Dateien aus dem public-Verzeichnis bereitstellen
+app.use(express.static('public'));
 
 app.use((req, res, next) => {
   if (req.header('x-forwarded-proto') !== 'https') {
@@ -29,41 +48,34 @@ app.get('/unterbeitrag1', (req, res) => {
   res.sendFile(path.join(__dirname, 'unterbeitrag1.html'));
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage: storage });
-
 app.post('/upload', upload.single('file'), (req, res) => {
   if (req.file) {
-    res.json({ filename: req.file.filename });
+    res.json({ url: req.file.path });
   } else {
     res.status(400).send('Datei-Upload fehlgeschlagen.');
   }
 });
 
-app.get('/media', (req, res) => {
-  const directoryPath = path.join(__dirname, 'uploads');
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      return res.status(500).send('Verzeichnis kann nicht durchsucht werden: ' + err);
-    }
-    const mediaFiles = files.map(file => {
-      const fileType = file.split('.').pop();
-      return { url: `/uploads/${file}`, type: fileType.startsWith('mp4') ? 'video/mp4' : 'image/jpeg' };
-    });
+app.get('/media', async (req, res) => {
+  try {
+    const { resources } = await cloudinary.search
+      .expression('folder:uploads')
+      .sort_by('public_id', 'desc')
+      .max_results(30)
+      .execute();
+    const mediaFiles = resources.map(file => ({
+      url: file.secure_url,
+      type: file.format.startsWith('mp4') ? 'video/mp4' : 'image/jpeg'
+    }));
     res.json(mediaFiles);
-  });
+  } catch (error) {
+    res.status(500).send('Fehler beim Abrufen der Medien: ' + error.message);
+  }
 });
 
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
+
 
 
