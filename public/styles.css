@@ -45,8 +45,10 @@ header nav a:hover {
 }
 
 .gallery img, .gallery video {
-    max-width: 300px;
-    max-height: 300px;
+    width: auto;
+    height: auto;
+    max-width: none; /* Entfernt die Begrenzung der maximalen Breite */
+    max-height: none; /* Entfernt die Begrenzung der maximalen Höhe */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s, box-shadow 0.3s;
