@@ -10,9 +10,9 @@ const port = process.env.PORT || 3000;
 
 // Cloudinary Konfiguration
 cloudinary.config({
-  cloud_name: 'ds4nokwd3',
-  api_key: '727516436138348',
-  api_secret: 'LDt1qY5yWqfJvX41EVvXSfYs40o'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'ds4nokwd3',
+  api_key: process.env.CLOUDINARY_API_KEY || '727516436138348',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'LDt1qY5yWqfJvX41EVvXSfYs40o'
 });
 
 // Multer Cloudinary Storage Konfiguration
@@ -20,7 +20,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'uploads',
-    format: async (req, file) => 'jpg', // Unterstützte Formate: jpg, png, etc.
+    format: async (req, file) => file.mimetype.startsWith('image/') ? 'jpg' : 'mp4',
     public_id: (req, file) => Date.now().toString()
   }
 });
@@ -28,24 +28,16 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 app.use(cors());
-app.use(express.static('public'));
-
-app.use((req, res, next) => {
-  if (req.header('x-forwarded-proto') !== 'https') {
-    res.redirect(`https://${req.header('host')}${req.url}`);
-  } else {
-    next();
-  }
-});
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Hauptseite
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Unterbeitrag
 app.get('/unterbeitrag1', (req, res) => {
-  res.sendFile(path.join(__dirname, 'unterbeitrag1.html'));
+  res.sendFile(path.join(__dirname, 'public', 'unterbeitrag1.html'));
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -55,6 +47,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     res.status(400).send('Datei-Upload fehlgeschlagen.');
   }
 });
+
 
 app.get('/media', async (req, res) => {
   try {
@@ -76,6 +69,3 @@ app.get('/media', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
-
-
-

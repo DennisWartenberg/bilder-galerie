@@ -48,7 +48,7 @@ header nav a:hover {
     max-width: 300px; /* Maximalbreite der Bilder */
     max-height: 300px; /* Maximalhöhe der Bilder */
     width: auto; /* Breite automatisch anpassen */
-    height: auto; /* Höhe automatisch anpassen */
+    height: auto; /* Höhe automatisch anpassen */  
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s, box-shadow 0.3s;
