@@ -48,7 +48,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
   }
 });
 
-
 app.get('/media', async (req, res) => {
   try {
     const { resources } = await cloudinary.search
@@ -69,3 +68,4 @@ app.get('/media', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
+
