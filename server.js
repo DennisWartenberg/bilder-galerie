@@ -28,6 +28,13 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 app.use(cors());
+
+// Cache-Control header hinzufügen
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Hauptseite
@@ -57,7 +64,7 @@ app.get('/media', async (req, res) => {
       .execute();
     const mediaFiles = resources.map(file => ({
       url: file.secure_url,
-      type: file.format.startsWith('mp4') ? 'video/mp4' : 'image/jpeg'
+      type: file.format.starts_with('mp4') ? 'video/mp4' : 'image/jpeg'
     }));
     res.json(mediaFiles);
   } catch (error) {
