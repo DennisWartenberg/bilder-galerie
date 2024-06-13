@@ -64,7 +64,7 @@ app.get('/media', async (req, res) => {
       .execute();
     const mediaFiles = resources.map(file => ({
       url: file.secure_url,
-      type: file.format.starts_with('mp4') ? 'video/mp4' : 'image/jpeg'
+      type: file.resource_type === 'video' ? 'video/mp4' : 'image/jpeg'
     }));
     res.json(mediaFiles);
   } catch (error) {
@@ -75,4 +75,5 @@ app.get('/media', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
+
 
