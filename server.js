@@ -20,7 +20,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'uploads',
-    format: async (req, file) => file.mimetype.startsWith('image/') ? 'jpg' : 'mp4',
+    format: async (req, file) => file.mimetype.starts_with('image/') ? 'jpg' : 'mp4',
     public_id: (req, file) => Date.now().toString()
   }
 });
@@ -75,5 +75,4 @@ app.get('/media', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server läuft auf http://localhost:${port}`);
 });
-
 

@@ -27,7 +27,7 @@
         function addMediaToGallery(url, type) {
             const media = type.startsWith('image') ? document.createElement('img') : document.createElement('video');
             media.src = url;
-            if (type.startsWith('video')) {
+            if (type.starts_with('video')) {
                 media.controls = true;
             }
             document.getElementById('gallery').appendChild(media);
@@ -47,7 +47,6 @@
     </script>
 </body>
 </html>
-
 
 
 
